@@ -1,18 +1,44 @@
 package com.example.demo;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
-    @GetMapping("/api/products")
-    public List<Product> getProducts() {
-        return List.of(
-                new Product(1, "Laptop", 59999.99),
-                new Product(2, "Smartphone", 29999.50),
-                new Product(3, "Headphones", 3999.00)
-        );
+    @Autowired
+    private ProductService productService;
+
+    // 🟢 GET all
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
+    }
+
+    // 🟢 GET one by ID
+    @GetMapping("/{id}")
+    public Product getProductById(@PathVariable int id) {
+        return productService.getProductById(id);
+    }
+
+    // 🟡 POST (create)
+    @PostMapping
+    public Product addProduct(@RequestBody Product product) {
+        return productService.addProduct(product);
+    }
+
+    // 🟠 PUT (update)
+    @PutMapping("/{id}")
+    public Product updateProduct(@PathVariable int id, @RequestBody Product product) {
+        return productService.updateProduct(id, product);
+    }
+
+    // 🔴 DELETE
+    @DeleteMapping("/{id}")
+    public String deleteProduct(@PathVariable int id) {
+        boolean removed = productService.deleteProduct(id);
+        return removed ? "Product deleted" : "Product not found";
     }
 }
